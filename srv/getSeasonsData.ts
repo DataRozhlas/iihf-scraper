@@ -22,7 +22,7 @@ seasons.forEach(async (season) => {
   const url = `https://www.iihf.com/en/events/${season}/wm/schedule`;
   const html = await getRawData(url);
   Bun.write(
-    `.srv/data/seasons/${season}.html`,
+    `srv/data/seasons/${season}.html`,
     html,
   );
   console.log(season, "done");
