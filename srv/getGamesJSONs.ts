@@ -15,9 +15,9 @@ const seasons = [
   "2014",
 ];
 
-const downloadPDF = async (url: string) => {
-  const pdf = await fetch(url);
-  return pdf;
+const downloadJSON = async (url: string) => {
+  const json = await fetch(url);
+  return json;
 };
 
 for (let i = 0; i < seasons.length; i++) {
@@ -30,20 +30,20 @@ for (let i = 0; i < seasons.length; i++) {
     ).text();
 
     const root = parse(game);
-    const links = root.querySelectorAll("a");
-    const pdf = links.find((link) => link.innerText.includes("Shot Chart"))
-      ?.getAttribute("href");
-    if (pdf) {
-      const pdfUrl = `https://www.iihf.com${pdf}`;
-      const pdfData = await downloadPDF(pdfUrl);
-      const pdfBlob = await pdfData.blob();
+    const gameID = root.querySelector("div#hero-game-center")?.getAttribute(
+      "data-game-id",
+    );
+    if (gameID) {
+      const jsonUrl =
+        `https://realtime.iihf.com/gamestate/GetLatestState/${gameID}`;
+      const data = await downloadJSON(jsonUrl);
       Bun.write(
-        `srv/data/pdf/${seasons[i]}/${files[j].split(".")[0]}.pdf`,
-        pdfBlob,
+        `srv/data/json/${seasons[i]}/${files[j].split(".")[0]}.json`,
+        data,
       );
       console.log(seasons[i], files[j], "done");
       setTimeout(() => {}, 1000);
     }
-    if (!pdf) console.log(seasons[i], files[j], "no pdf");
+    if (!gameID) console.log(seasons[i], files[j], "no pdf");
   }
 }
