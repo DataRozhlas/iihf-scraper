@@ -1,5 +1,6 @@
 import { readdir } from "node:fs/promises";
 import { csvFormat } from "d3-dsv";
+import { file } from "bun";
 
 const seasons = [
   "2023",
@@ -23,7 +24,9 @@ for (let i = 0; i < seasons.length; i++) {
       `srv/data/json/${seasons[i]}/${files[j]}`,
     ).text();
     const data = JSON.parse(json);
-
+    const gameRank = parseInt(files[j].split("-")[0]);
+    const playoff = gameRank > 56;
+    9;
     for (let k = 0; k < data.Periods.length; k++) {
       const goals = data.Periods[k].ScoringActions;
       const gameId = data.GameId;
@@ -47,6 +50,8 @@ for (let i = 0; i < seasons.length; i++) {
           executedBy: goal.ExecutedByShortTeamName,
           homeTeam,
           awayTeam,
+          gameRank,
+          playoff,
         });
       }
     }

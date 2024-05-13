@@ -3,16 +3,31 @@ import { csvFormat } from "d3-dsv";
 
 const result = goals.reduce(
   (
-    acc: { season: any; team: any; goals: number; goalsByDefence: number }[],
-    goal: { homeTeam: any; season: any; athletePosition: string },
+    acc: {
+      season: any;
+      playoff: boolean;
+      team: any;
+      goals: number;
+      goalsByDefence: number;
+    }[],
+    goal: {
+      executedBy: any;
+      season: any;
+      athletePosition: string;
+      playoff: boolean;
+    },
   ) => {
-    const exists = acc.find((record: { team: any; season: any }) =>
-      record.team === goal.homeTeam && record.season === goal.season
+    const exists = acc.find((
+      record: { team: any; season: any; playoff: boolean },
+    ) =>
+      record.team === goal.executedBy && record.season === goal.season &&
+      record.playoff === goal.playoff
     );
     if (!exists) {
       acc.push({
         season: goal.season,
-        team: goal.homeTeam,
+        team: goal.executedBy,
+        playoff: goal.playoff,
         goals: 1,
         goalsByDefence: goal.athletePosition === "D" ? 1 : 0,
       });

@@ -1,52 +1,48 @@
 const goals = await Bun.file("srv/data/goals.json").json();
 import { csvFormat } from "d3-dsv";
 
+type GameRecord = {
+  season: any;
+  team: any;
+  playoff: boolean;
+  goals: number;
+  pp1: number;
+  pp2: number;
+  sh1: number;
+  sh2: number;
+  eng: number;
+  ea: number;
+  gws: number;
+  eq: number;
+  ps: number;
+  [key: string]: any;
+};
+
 const result = goals.reduce(
   (
-    acc: {
-      season: any;
-      team: any;
-      goals: number;
-      pp1: number;
-      pp2: number;
-      sh1: number;
-      sh2: number;
-      eng: number;
-      ea: number;
-      gws: number;
-      eq: number;
-      ps: number;
-    }[],
+    acc: GameRecord[],
     goal: {
-      homeTeam: any;
+      executedBy: string;
       season: any;
       athletePosition: string;
       situationType: string;
+      playoff: boolean;
     },
   ) => {
     const exists = acc.find((
-      record: {
-        team: any;
-        season: any;
-        goals: number;
-        pp1: number;
-        pp2: number;
-        sh1: number;
-        sh2: number;
-        eng: number;
-        ea: number;
-        gws: number;
-        eq: number;
-        ps: number;
-      },
-    ) => record.team === goal.homeTeam && record.season === goal.season);
+      record: GameRecord,
+    ) =>
+      record.team === goal.executedBy && record.season === goal.season &&
+      record.playoff === goal.playoff
+    );
     const codes = goal.situationType;
     const codesArray = codes.split(",");
 
     if (!exists) {
       acc.push({
         season: goal.season,
-        team: goal.homeTeam,
+        team: goal.executedBy,
+        playoff: goal.playoff,
         goals: 1,
         pp1: codesArray.includes("PP1") ? 1 : 0,
         pp2: codesArray.includes("PP2") ? 1 : 0,
@@ -62,7 +58,8 @@ const result = goals.reduce(
     if (exists) {
       exists.goals += 1;
       codesArray.forEach((code) => {
-        exists[code.toLowerCase() as keyof typeof exists] += 1;
+        const key = code.toLowerCase();
+        exists[key] += 1;
       });
     }
     return acc;

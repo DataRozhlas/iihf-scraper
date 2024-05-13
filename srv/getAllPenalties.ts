@@ -23,6 +23,8 @@ for (let i = 0; i < seasons.length; i++) {
       `srv/data/json/${seasons[i]}/${files[j]}`,
     ).text();
     const data = JSON.parse(json);
+    const gameRank = parseInt(files[j].split("-")[0]);
+    const playoff = gameRank > 56;
 
     for (let k = 0; k < data.Periods.length; k++) {
       const penalties = data.Periods[k].TimeLineActions.filter((
@@ -53,6 +55,8 @@ for (let i = 0; i < seasons.length; i++) {
             : null,
           homeTeam,
           awayTeam,
+          gameRank,
+          playoff,
         });
       }
     }

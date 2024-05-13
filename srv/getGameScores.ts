@@ -23,6 +23,8 @@ for (let i = 0; i < seasons.length; i++) {
       `srv/data/json/${seasons[i]}/${files[j]}`,
     ).text();
     const data = JSON.parse(json);
+    const gameRank = parseInt(files[j].split("-")[0]);
+    const playoff = gameRank > 56;
 
     result.push({
       season: seasons[i],
@@ -30,6 +32,8 @@ for (let i = 0; i < seasons.length; i++) {
       awayTeam: data.AwayTeam.ShortTeamName,
       homeScore: parseInt(data.CurrentScore.Home),
       awayScore: parseInt(data.CurrentScore.Away),
+      gameRank,
+      playoff,
     });
   }
 }
